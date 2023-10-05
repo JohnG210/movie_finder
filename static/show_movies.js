@@ -3,7 +3,7 @@
 // Functions
 function display_movie_list(movies_list){
     $.each(movies_list['Title'], function( index) {
-        let correct_idx = parseInt(movies_list["Rank"][index])-1
+        let correct_idx = parseInt(movies_list["Rank"][index])
         $("#pop-movie-cont").append('<div class="row" id="movie-container">' + 
         '<div class="col-md-1 rank-col">' + movies_list["Rank"][index] + '</div>' +
         '<div class="col-md-5 names-col"><a href="/movie/'+ correct_idx.toString() + '">' + movies_list["Title"][index] + '</a></div>' +
