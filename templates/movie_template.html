@@ -1,0 +1,122 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <!-- Java -->
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+        <!-- <script src="./jquery-3.3.1.min.js"></script>
+        <script src="./jquery-ui.min.js"></script> -->
+        <!-- <script src="../static/log_sales.js"></script> -->
+        <!-- <script type="text/javascript" src="{{ url_for('static', filename = 'show_movies.js') }}"></script> -->
+        
+        <script>
+            let movie = {{movie|tojson}}
+            console.log(movie)
+            let user = {{user|tojson}}
+            console.log(user)
+            // Change the name of the sales person
+            function watch_movie() {
+                let mov_rank = movie['Rank'][0]
+                $.ajax({
+                    type: "POST",
+                    url: "watch_movie",                
+                    dataType : "json",
+                    contentType: "application/json; charset=utf-8",
+                    data : JSON.stringify(mov_rank),
+                    success: function(result){
+                        console.log('watched ' + mov_rank)
+                        location.reload()
+                        // $("#new_name").val("")
+                    },
+                    error: function(request, status, error){
+                        console.log("Error");
+                        console.log(request)
+                        console.log(status)
+                        console.log(error)
+                    }
+                });
+            }
+            $(document).ready(function()
+            {
+                // FIRST SETUP
+                $( "#watch-btn" ).click(function(){watch_movie()});
+            }); 
+        </script>
+
+        <!-- Styles -->
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="./jquery-ui.css">
+        <link rel="stylesheet" href="./bootstrap.min.css"> -->
+        <link rel="stylesheet" href="../static/main.css" type="text/css">
+    </head>
+    
+    <div class="row" id="overall-movie-container">
+        <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-name-cont">
+                    {{movie['Title'][0]}}<br>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-art-cont">
+                    <img src='{{movie['pic'][0]}}' alt="Artwork" style="width:100px;height:200px;">
+                </div>
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-desc-cont">
+                    {{movie['Description'][0]}}
+                </div>  
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-cast-cont">
+                    {{movie['Cast'][0]}}
+                </div>  
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-dur-cont">
+                    {{movie['Duration'][0]}}
+                </div> 
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-rat-cont">
+                    {{movie['Title'][0]}}
+                </div> 
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-rank-cont">
+                    {{movie['Rank'][0]}}
+                </div> 
+            </div>    
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div id="movie-stream-cont">
+                    <form action="https://www.google.com/" method="get" target="_blank">
+                        <button id="watch-btn" class="btn btn-primary">Watch</button>
+                    </form>
+                </div>
+            </div>    
+        </div>
+        </div> 
+    </div>
+</html>
+
+{% endblock %}

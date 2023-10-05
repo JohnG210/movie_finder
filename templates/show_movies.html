@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <!-- Java -->
+        <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>
+        <!-- <script src="./jquery-3.3.1.min.js"></script>
+        <script src="./jquery-ui.min.js"></script> -->
+        <!-- <script src="../static/log_sales.js"></script> -->
+        <script type="text/javascript" src="{{ url_for('static', filename = 'show_movies.js') }}"></script>
+        
+        <script>
+            let movies_list = {{movies_list|tojson}}
+            console.log(movies_list)
+            let user = {{user|tojson}}
+            console.log(user)
+            let other_user = {{other_user|tojson}}
+            console.log(other_user)
+            let cur_db = {{cur_db|tojson}}
+            console.log(cur_db)
+        </script>
+
+        <!-- Styles -->
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+        <!-- <link rel="stylesheet" href="./jquery-ui.css">
+        <link rel="stylesheet" href="./bootstrap.min.css"> -->
+        <link rel="stylesheet" href="../static/main.css" type="text/css">
+    </head>
+    <div class="row" id="overall-container">
+        <div class="col-md-2" id="room-col">
+            <input value="{{other_user}}" id="guest-name"></input><br>
+            <button id="change-guest-button" class="btn btn-primary">Update</button>
+        
+        </div>
+        <div class="col-md-10" id="movie-col">
+            <div class="row" id="src-container">
+                <p id="src-tit">Source:</p>
+                <div class="dropdown">
+                 <button onclick="myFunction()" class="dropbtn">{{cur_db}}</button>
+                    <div id="myDropdown" class="dropdown-content">
+                        <a href="/render-1000">IMDB Top 1000</a>
+                        <a href="/render-50">IMDB Top 50</a>
+                        <a href="/render-10">IMDB Top 10</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row" id="header-container">
+                <div class="col-md-1" id="rank-col-tit"><p class="col-title" id="imdb-tit">IMDB Rank</p></div>
+                <div class="col-md-5" id="names-col-tit"><p class="col-title" id="name-tit">Title</p> </div>
+                <div class="col-md-2" id="rate-col-tit"><p class="col-title" id="rate-tit">Rating</p></div>
+                <div class="col-md-2" id="watched-col-tit"><p class="col-title" id="watched-tit">User Watched</p></div>
+                <div class="col-md-2" id="ws-tit"></div>
+            </div>
+            <div class="row" id="header-container">
+                <div class="col-md-12" id="ws">
+                    <hr id="test">
+                </div>
+            </div>
+            <div class="row" id="movie-container">
+                <div class="col-md-12" id="pop-movie-cont"></div>
+            </div>
+        </div>
+    </div>
+</html>
+
+{% endblock %}

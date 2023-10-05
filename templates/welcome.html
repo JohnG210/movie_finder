@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+<script>
+    let user = {{user|tojson}}
+    console.log(user)
+</script>
+
+{% block content %}
+
+    <div>
+        Welcome to Movie Finder! No description yet
+    </div>
+    <div>
+        <a type="submit" href="/find">Find Movie</button>
+    </div>
+    <div>
+        <a type="submit" href="/find">Manage Watched</button>
+    </div>
+
+
+
+{% endblock %}
