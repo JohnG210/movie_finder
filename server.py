@@ -2,46 +2,10 @@ from pydoc import cli
 from flask import Flask
 from flask import render_template
 from flask import Response, request, jsonify
-import firebase_admin
-from firebase_admin import firestore
-from firebase_admin import credentials
-from firebase_admin import firestore
 import csv
 import numpy as np
 import pandas as pd
 app = Flask(__name__)
-
-# Use a service account.
-cred = credentials.Certificate('temporal-tensor-362216-ce8e831dd5d8.json')
-app_fs = firebase_admin.initialize_app(cred)
-db = firestore.client()
-
-# Firestore load functions
-def loadPerson(db):
-    users_ref = db.collection(u'sales_person')
-    docs = users_ref.stream()
-    for doc in docs:
-        a = 1
-    name = doc.to_dict()
-    # name = name['name']
-    return name
-
-def loadSales(db):
-    users_ref = db.collection(u'sales')
-    docs = users_ref.stream()
-    sales = []
-    for doc in docs:
-        sales.append(doc.to_dict())
-    return sales
-
-def loadClients(db):
-    users_ref = db.collection(u'clients')
-    docs = users_ref.stream()
-    for doc in docs:
-        a = 1
-    clients = doc.to_dict()
-    # clients = clients['clients']
-    return clients
 
 def importCsvWatchedData(file):
     with open(file, newline='') as csvfile:
@@ -73,7 +37,6 @@ def importCsvData(file):
             row_idx = row_idx + 1
     return pd.DataFrame(data_out, columns=headers)  
 
-# Load in firestore data
 # current_id = 2
 # sales_person = loadPerson(db)
 # sales = loadSales(db)
@@ -180,7 +143,7 @@ def watched_movie():
     return jsonify(movie_id = movie_id)
 
 if __name__ == '__main__':
-   app.run(debug = True)
+   app.run(debug = True, host="0.0.0.0", port=8012)
 
 
 
