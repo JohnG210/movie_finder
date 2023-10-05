@@ -77,7 +77,7 @@ def showMovies():
         setCurrentDb('50')
     else:
         movies['current'] = sortByWatched(movies['current'], watchedData)
-    return render_template('show_movies.html', movies_list=movies['current'].to_dict(), other_user=other_user, user=user, cur_db='IMDB Top 10') 
+    return render_template('show_movies.html', movies_list=movies['current'].to_dict(), other_user=other_user, user=user, cur_db='IMDB Top 50')
 
 def setCurrentDb(desired_db):
     global movies
