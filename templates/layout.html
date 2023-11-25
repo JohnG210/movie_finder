@@ -6,18 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
      <link rel="icon" href="data:,">
 
-<!-- jquery -->
+<!-- jquery 
   <script src="http://code.jquery.com/jquery-3.3.1.min.js"></script>
   <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"></script>  
-  <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css"> -->
 
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
 
 
-  <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}">
+  <!-- <link rel="stylesheet" href="{{url_for('static', filename='main.css')}}"> -->
 
     <title>Movie Finder</title>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="684675525832-sltv1hb2ifh3dgbdqinrpk3fg57he20b.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
   </head>
   <body>
     
@@ -37,8 +40,9 @@
         <!-- <a class="nav-link" href="/hello/class">Hello Name</a> -->
         <!-- <a class="nav-link" href="/people">People</a> -->
         <div id="topnav-right">
-          <input value="{{user}}" id="enter-user"></input>
-          <button id="up-usr-button" class="btn btn-primary">Update</button>
+          <!-- <input value="{{user}}" id="enter-user"></input> -->
+          <!-- <button id="up-usr-button" class="btn btn-primary">Update</button> -->
+          <div class="g-signin2" data-onsuccess="onSignIn" data-theme="dark"</div>
         </div>
       </div>
     </div>
@@ -49,6 +53,22 @@
         {% block content %}
         {% endblock %}
     </div>
+    <script>
+      function onSignIn(googleUser) {
+        // Useful data for your client-side scripts:
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // Don't send this directly to your server!
+        console.log('Full Name: ' + profile.getName());
+        console.log('Given Name: ' + profile.getGivenName());
+        console.log('Family Name: ' + profile.getFamilyName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail());
+
+        // The ID token you need to pass to your backend:
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log("ID Token: " + id_token);
+      };
+    </script>
   </body>
 </html>
 

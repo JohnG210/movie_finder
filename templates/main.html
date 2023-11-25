@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>S3 Site Auth</title>
+
+    <!-- FAVICON -->
+    <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+
+    <!-- EXTERNAL STYLESHEETS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.5/css/bulma.min.css">
+
+    <!-- INTERNAL STYLESHEETS -->
+    <style>
+        .navbar-brand .navbar-item {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .navbar-item img {
+            max-height: 50px;
+        }
+    </style>
+
+    <!-- IMPORTANT!! SCRIPTS TO LOAD IN THE HEAD -->
+    <script src="https://apis.google.com/js/platform.js?onload=loadAuth" async defer></script>
+    <meta name="google-signin-scope" content="profile email">
+    <meta name="google-signin-client_id" content="684675525832-sltv1hb2ifh3dgbdqinrpk3fg57he20b.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="https://fokal.ai">
+                <!--img src="assets/logo-with-text.png" width="auto" height="50"> -->
+            </a>
+
+            <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="g-signin2" data-onsuccess="signIn" data-theme="dark">signin</div>
+                </div>
+                <div class="navbar-item" id="userData" style="visibility: hidden; display: none">
+                    <span id="userName"></span> &ensp;
+                    <a  onclick="signOut('Bye bye!');" class="button is-info">
+                        Sign Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <iframe id="index" style="border:none; margin:0; padding:0; overflow:hidden; z-index:999999; width: 100vw; height: 90vh"></iframe>
+    </body>
+    <script>
+        let GoogleAuth;
+
+        function loadAuth(){
+            gapi.load('client:auth2', initClient);
+        }
+
+        function initClient() {
+            gapi.client.init({
+                'clientId': '684675525832-sltv1hb2ifh3dgbdqinrpk3fg57he20b.apps.googleusercontent.com',
+                'scope': 'profile email'
+            }).then(function () {
+                GoogleAuth = gapi.auth2.getAuthInstance();
+                console.log("sign in");
+                renderButton();
+            });
+        }
+
+        function renderButton(){
+            console.log("render sign in");
+            gapi.signin2.render('signinBtn', {
+                'scope': 'profile email',
+                'prompt': 'select_account',
+                'width': 240,
+                'height': 36,
+                'longtitle': true,
+                'theme': 'dark',
+                'onsuccess': signIn,
+                'onfailure': () => {}
+            });
+        }
+
+        function signIn(googleUser) {
+            const profile = googleUser.getBasicProfile();
+
+            console.log("ID: " + profile.getId());
+            console.log('Full Name: ' + profile.getName());
+            console.log('Given Name: ' + profile.getGivenName());
+            console.log('Family Name: ' + profile.getFamilyName());
+            console.log("Image URL: " + profile.getImageUrl());
+            console.log("Email: " + profile.getEmail());
+
+            document.getElementById('userName').innerText = profile.getEmail();
+            writeFrame('');
+            toggleElement('signinBtn', false);
+            toggleElement('userData', true);
+
+            // const file = prompt("Which page do you want to render?");
+            const file = 'index';
+
+            const id_token = googleUser.getAuthResponse().id_token;
+            const req = new XMLHttpRequest();
+            const timestamp = +new Date;
+            const url = file + '.html?t=' + timestamp;
+            req.open('GET', url, true);
+            req.withCredentials = true;
+            req.setRequestHeader('authorization', 'Bearer ' + id_token);
+            req.setRequestHeader('Access-Control-Allow-Headers', 'authorization');
+            req.onreadystatechange = function () {
+                console.log(req);
+                if (req.readyState === 4) {
+                    if (req.status === 200){
+                        writeFrame(req.responseText);
+                    } else if (req.status === 401){
+                        window.location.href = 'unauthorized.html';
+                    } else if (req.status === 403){
+                        signOut(getForbiddenText(profile));
+                    } else {
+                        writeFrame(req.responseText);
+                    }
+                }
+            };
+
+            req.send();
+        }
+
+        function signOut(text) {
+            GoogleAuth.disconnect();
+            return GoogleAuth.signOut().then(() => {
+                console.log('User signed out.');
+                document.getElementById('userName').innerText = '';
+                toggleElement('signinBtn', true);
+                toggleElement('userData', false);
+
+                writeFrame(text);
+            }).catch(err => {
+                console.log('Error while user signing out.');
+                writeFrame(err.message);
+            });
+        }
+
+        function toggleElement(name, toggle){
+            const btn = document.getElementById(name);
+            btn.style.visibility = toggle ? 'visible' : 'hidden';
+            btn.style.display = toggle ? 'flex' : 'none';
+        }
+
+        function writeFrame(text){
+            const doc = document.getElementById("index").contentWindow.document;
+            doc.open();
+            doc.write(text);
+            doc.close();
+        }
+
+        function getForbiddenText(profile) {
+            return `
+                <html>
+                <head></head>
+                <body>
+                <h3>Can't let you in as ${profile.getEmail()}</h3>
+                <h4>Please login with your company's account!</h4>
+                </body>
+                </html>
+            `
+        }
+
+    </script>
+</html>
